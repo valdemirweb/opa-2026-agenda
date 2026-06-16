@@ -55,7 +55,7 @@ def buscar_jogos_globo():
             hora_elemento = bloco.find('span', class_='placar-jogo__informacoes-horario')
             horario = hora_elemento.text.strip() if hora_elemento else "16h"
 
-            # ---- NOVA LÓGICA: Captura de Placar e Gols ----
+            # ---- LÓGICA: Captura de Placar e Gols ----
             placar_mandante = ""
             placar_visitante = ""
             gols_mandante = ""
@@ -114,20 +114,20 @@ def buscar_jogos_globo():
             print(f"Erro ao processar bloco de jogo: {err}")
             continue
 
-    # Fallback caso a lista venha vazia da raspagem dinâmica
+    # Fallback totalmente limpo de placares e gols se não iniciados
     if not lista_jogos:
         lista_jogos = [
             {
                 "mandante": "França", "visitante": "Senegal", "sigla_m": "FR", "sigla_v": "SN", 
-                "horario": "16h", "placar_m": "2", "placar_v": "1", 
-                "gols_m": "Mbappé 14', Dembélé 67'", "gols_v": "Jackson 43'",
+                "horario": "16h", "placar_m": "", "placar_v": "", 
+                "gols_m": "", "gols_v": "",
                 "transmissao": "TV Globo, sportv, Globoplay, ge.globo, SBT, NSports e Cazé TV", 
                 "link": "https://ge.globo.com/futebol/copa-do-mundo/"
             },
             {
                 "mandante": "Iraque", "visitante": "Noruega", "sigla_m": "IQ", "sigla_v": "NO", 
-                "horario": "19h", "placar_m": "0", "placar_v": "3", 
-                "gols_m": "", "gols_v": "Haaland 22', 58', Ødegaard 75'",
+                "horario": "19h", "placar_m": "", "placar_v": "", 
+                "gols_m": "", "gols_v": "",
                 "transmissao": "Cazé TV", "link": "https://ge.globo.com/futebol/copa-do-mundo/"
             },
             {
@@ -145,16 +145,16 @@ def gerar_html_painel(jogos):
     
     html_cards = ""
     for jogo in jogos:
-        # Estrutura visual do placar se ele existir
+        # Só exibe a estrutura do placar se ambos os lados contiverem valor numérico real
         exibicao_placar = ""
-        if jogo['placar_m'] != "" or jogo['placar_v'] != "":
+        if jogo['placar_m'] != "" and jogo['placar_v'] != "":
             exibicao_placar = f"""
             <div style="font-size: 2.5rem; font-weight: 800; margin: 10px 0; color: #fff; letter-spacing: 5px;">
                 {jogo['placar_m']} <span style="color: #00ff87; font-size: 1.5rem;">x</span> {jogo['placar_v']}
             </div>
             """
         
-        # Estrutura visual dos autores dos gols
+        # Só exibe a estrutura visual dos gols se houver algum autor registrado
         exibicao_gols = ""
         if jogo['gols_m'] or jogo['gols_v']:
             exibicao_gols = f"""
@@ -221,7 +221,7 @@ def gerar_html_painel(jogos):
 """
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_completo)
-    print("index.html atualizado com sucesso com placares e gols!")
+    print("index.html atualizado com sucesso!")
 
 if __name__ == "__main__":
     dados_jogos = buscar_jogos_globo()
